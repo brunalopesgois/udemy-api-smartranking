@@ -1,6 +1,7 @@
 import { PlayerInterface } from './../interfaces/player.interface';
+import { Document } from 'mongoose';
 
-export class Player implements PlayerInterface {
+export class Player extends Document implements PlayerInterface {
   id: string;
 
   phone: string;
@@ -16,12 +17,6 @@ export class Player implements PlayerInterface {
   playerPictureUrl: string;
 
   constructor(player: Partial<Player>) {
-    this.id = player.id;
-    this.phone = player.phone;
-    this.email = player.email;
-    this.name = player.name;
-    this.ranking = player.ranking;
-    this.rankingPosition = player.rankingPosition;
-    this.playerPictureUrl = player.playerPictureUrl;
+    super(player);
   }
 }

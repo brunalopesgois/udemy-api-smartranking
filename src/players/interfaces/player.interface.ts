@@ -1,6 +1,4 @@
 export interface PlayerInterface {
-  id: string;
-
   phone: string;
 
   email: string;

@@ -3,34 +3,35 @@ import { Player } from './../entities/player.entity';
 import { CreatePlayerDto } from './../dtos/create-player.dto';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class PlayersService {
   private readonly logger: Logger;
 
-  private players: Player[];
+  private players: Player[] = [];
 
-  constructor() {
-    this.players = [];
+  constructor(
+    @InjectModel('Player') private readonly playerModel: Model<Player>,
+  ) {
     this.logger = new Logger(PlayersService.name);
   }
 
   async findAll(): Promise<Player[]> {
-    return this.players;
+    return this.playerModel.find();
   }
 
   async findById(id: string): Promise<Player> {
-    const player = this.players.find((playerObj) => playerObj.id === id);
-
-    return player;
+    return this.playerModel.findById(id);
   }
 
   async create(createPlayerDto: CreatePlayerDto): Promise<void> {
     this.logger.log(`Create player: ${JSON.stringify(createPlayerDto)}`);
 
-    const { phone, email, name } = createPlayerDto;
+    const { email } = createPlayerDto;
 
-    const playerExists = this.players.find((player) => player.email === email);
+    const playerExists = await this.playerModel.findOne({ email });
 
     if (playerExists) {
       const message = `Player with email ${email} already exists`;
@@ -39,18 +40,10 @@ export class PlayersService {
       throw new HttpException(message, HttpStatus.BAD_REQUEST);
     }
 
-    const player: Player = new Player({
-      id: uuidv4(),
-      phone: phone,
-      email: email,
-      name: name,
-      ranking: 'A',
-      rankingPosition: 1,
-      playerPictureUrl: 'www.google.com.br/foto123.jpg',
-    });
+    const player = new this.playerModel(createPlayerDto);
 
     try {
-      this.players.push(player);
+      player.save();
     } catch (error) {
       this.logger.error(error.message);
 
@@ -63,36 +56,25 @@ export class PlayersService {
   async update(id: string, updatePlayerDto: UpdatePlayerDto): Promise<Player> {
     this.logger.log(`Update player: ${JSON.stringify(updatePlayerDto)}`);
 
-    const player: Player = await this.findById(id);
+    try {
+      const player = await this.playerModel.findByIdAndUpdate(
+        { id },
+        { $set: updatePlayerDto },
+        { new: true },
+      );
 
-    if (!player) {
-      const message = `Player with id ${id} not found`;
-      this.logger.error(message);
+      this.logger.log(`Updated player: ${player}`);
 
-      throw new HttpException(message, HttpStatus.NOT_FOUND);
+      return player;
+    } catch (error) {
+      this.logger.error(error.message);
+
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    const { phone, email, name } = updatePlayerDto;
-
-    const updatedPlayer = new Player({
-      id: player.id,
-      phone: phone,
-      email: email,
-      name: name,
-      ranking: player.ranking,
-      rankingPosition: player.rankingPosition,
-      playerPictureUrl: player.playerPictureUrl,
-    });
-
-    Object.assign(player, updatedPlayer);
-
-    this.logger.log(`Updated player: ${player}`);
-
-    return player;
   }
 
   async delete(id: string): Promise<void> {
-    this.logger.log(`Remove player: todo`);
+    this.logger.log(`Remove player with id: ${id}`);
 
     const player: Player = await this.findById(id);
 
@@ -104,7 +86,7 @@ export class PlayersService {
     }
 
     try {
-      this.players = this.players.filter((player) => player.id !== id);
+      this.playerModel.deleteOne({ id }).exec();
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
