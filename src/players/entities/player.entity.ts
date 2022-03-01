@@ -1,4 +1,4 @@
-import { PlayerInterface } from './../interfaces/player.interface';
+import { PlayerInterface } from '../../shared/interfaces/players/player.interface';
 import { Document } from 'mongoose';
 
 export class Player extends Document implements PlayerInterface {

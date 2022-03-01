@@ -30,7 +30,7 @@ export class PlayersController {
 
   @Post()
   async store(@Body() createPlayerDto: CreatePlayerDto): Promise<void> {
-    await this.playersService.create(createPlayerDto);
+    return this.playersService.create(createPlayerDto);
   }
 
   @Put(':id')
