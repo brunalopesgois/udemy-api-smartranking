@@ -1,16 +1,19 @@
 import { UpdatePlayerDto } from './../dtos/update-player.dto';
 import { Player } from './../entities/player.entity';
 import { CreatePlayerDto } from './../dtos/create-player.dto';
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
+import {
+  Injectable,
+  Logger,
+  BadRequestException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 @Injectable()
 export class PlayersService {
   private readonly logger: Logger;
-
-  private players: Player[] = [];
 
   constructor(
     @InjectModel('Player') private readonly playerModel: Model<Player>,
@@ -37,7 +40,7 @@ export class PlayersService {
       const message = `Player with email ${email} already exists`;
       this.logger.error(message);
 
-      throw new HttpException(message, HttpStatus.BAD_REQUEST);
+      throw new BadRequestException(message);
     }
 
     const player = new this.playerModel(createPlayerDto);
@@ -47,7 +50,7 @@ export class PlayersService {
     } catch (error) {
       this.logger.error(error.message);
 
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new InternalServerErrorException(error.message);
     }
 
     this.logger.log(`Created player: ${JSON.stringify(player)}`);
@@ -56,8 +59,17 @@ export class PlayersService {
   async update(id: string, updatePlayerDto: UpdatePlayerDto): Promise<Player> {
     this.logger.log(`Update player: ${JSON.stringify(updatePlayerDto)}`);
 
+    let player: Player = await this.findById(id);
+
+    if (!player) {
+      const message = `Player with id ${id} not found`;
+      this.logger.error(message);
+
+      throw new NotFoundException(message);
+    }
+
     try {
-      const player = await this.playerModel.findByIdAndUpdate(
+      player = await this.playerModel.findByIdAndUpdate(
         { _id: id },
         { $set: updatePlayerDto },
         { new: true },
@@ -69,7 +81,7 @@ export class PlayersService {
     } catch (error) {
       this.logger.error(error.message);
 
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new InternalServerErrorException(error.message);
     }
   }
 
@@ -82,13 +94,15 @@ export class PlayersService {
       const message = `Player with id ${id} not found`;
       this.logger.error(message);
 
-      throw new HttpException(message, HttpStatus.NOT_FOUND);
+      throw new NotFoundException(message);
     }
 
     try {
-      this.playerModel.deleteOne({ id }).exec();
+      this.playerModel.deleteOne({ _id: id }).exec();
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      this.logger.error(error.message);
+
+      throw new InternalServerErrorException(error.message);
     }
 
     this.logger.log(`Player removed`);
