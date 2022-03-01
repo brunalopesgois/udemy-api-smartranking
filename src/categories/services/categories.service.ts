@@ -152,7 +152,19 @@ export class CategoriesService {
       throw new NotFoundException(message);
     }
 
-    category.players.push(playerId);
+    const playerInCategory = await this.categoryModel
+      .find({ _id: id })
+      .where('players')
+      .in(player.data._id);
+
+    if (playerInCategory.length > 0) {
+      const message = `Player with id ${id} already exists in category ${category.category}`;
+      this.logger.error(message);
+
+      throw new NotFoundException(message);
+    }
+
+    category.players.push(player.data._id);
 
     try {
       await this.categoryModel.findByIdAndUpdate(

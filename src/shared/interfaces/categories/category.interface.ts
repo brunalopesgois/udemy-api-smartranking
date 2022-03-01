@@ -1,3 +1,4 @@
+import { PlayerInterface } from './../../../../dist/players/interfaces/player.interface.d';
 import { RankingEventInterface } from './ranking-event.interface';
 
 export interface CategoryInterface {
@@ -7,5 +8,5 @@ export interface CategoryInterface {
 
   rankingEvents: RankingEventInterface[];
 
-  players: string[];
+  players: PlayerInterface[];
 }

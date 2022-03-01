@@ -1,3 +1,4 @@
+import { PlayerInterface } from './../../../shared/interfaces/players/player.interface';
 import { CategoryInterface } from './../../../shared/interfaces/categories/category.interface';
 import { RankingEvent } from './../events/event.entity';
 import { Document } from 'mongoose';
@@ -9,7 +10,7 @@ export class Category extends Document implements CategoryInterface {
 
   rankingEvents: RankingEvent[];
 
-  players: string[];
+  players: PlayerInterface[];
 
   constructor(category: Partial<Category>) {
     super(category);
