@@ -41,10 +41,9 @@ export class CategoriesService {
     const categoryExists = await this.categoryModel.findOne({ category });
 
     if (categoryExists) {
-      const message = `Category with name ${category} already exists`;
-      this.logger.error(message);
-
-      throw new BadRequestException(message);
+      throw new BadRequestException(
+        `Category with name ${category} already exists`,
+      );
     }
 
     const categoryEntity = new this.categoryModel(createCategoryDto);
@@ -52,8 +51,6 @@ export class CategoriesService {
     try {
       categoryEntity.save();
     } catch (error) {
-      this.logger.error(error.message);
-
       throw new InternalServerErrorException(error.message);
     }
 
@@ -71,19 +68,15 @@ export class CategoriesService {
     let categoryEntity: Category = await this.findById(id);
 
     if (!categoryEntity) {
-      const message = `Category with id ${id} not found`;
-      this.logger.error(message);
-
-      throw new NotFoundException(message);
+      throw new NotFoundException(`Category with id ${id} not found`);
     }
 
     const sameNameCategory = await this.categoryModel.findOne({ category });
 
     if (sameNameCategory && categoryEntity != sameNameCategory) {
-      const message = `Cannot save category with name ${category}. Already exists`;
-      this.logger.error(message);
-
-      throw new BadRequestException(message);
+      throw new BadRequestException(
+        `Cannot save category with name ${category}. Already exists`,
+      );
     }
 
     try {
@@ -97,8 +90,6 @@ export class CategoriesService {
 
       return categoryEntity;
     } catch (error) {
-      this.logger.error(error.message);
-
       throw new InternalServerErrorException(error.message);
     }
   }
@@ -109,17 +100,12 @@ export class CategoriesService {
     const category: Category = await this.findById(id);
 
     if (!category) {
-      const message = `Category with id ${id} not found`;
-      this.logger.error(message);
-
-      throw new NotFoundException(message);
+      throw new NotFoundException(`Category with id ${id} not found`);
     }
 
     try {
       this.categoryModel.deleteOne({ _id: id }).exec();
     } catch (error) {
-      this.logger.error(error.message);
-
       throw new InternalServerErrorException(error.message);
     }
 
@@ -133,10 +119,7 @@ export class CategoriesService {
     const category = await this.findById(id);
 
     if (!category) {
-      const message = `Category with id ${id} not found`;
-      this.logger.error(message);
-
-      throw new NotFoundException(message);
+      throw new NotFoundException(`Category with id ${id} not found`);
     }
 
     const { playerId } = addCategoryPlayerDto;
@@ -146,10 +129,7 @@ export class CategoriesService {
     );
 
     if (!player.data) {
-      const message = `Player with id ${id} not found`;
-      this.logger.error(message);
-
-      throw new NotFoundException(message);
+      throw new NotFoundException(`Player with id ${id} not found`);
     }
 
     const playerInCategory = await this.categoryModel
@@ -158,10 +138,9 @@ export class CategoriesService {
       .in(player.data._id);
 
     if (playerInCategory.length > 0) {
-      const message = `Player with id ${id} already exists in category ${category.category}`;
-      this.logger.error(message);
-
-      throw new NotFoundException(message);
+      throw new NotFoundException(
+        `Player with id ${id} already exists in category ${category.category}`,
+      );
     }
 
     category.players.push(player.data._id);
@@ -172,8 +151,6 @@ export class CategoriesService {
         { $set: category },
       );
     } catch (error) {
-      this.logger.error(error.message);
-
       throw new InternalServerErrorException(error.message);
     }
   }

@@ -37,10 +37,9 @@ export class PlayersService {
     const playerExists = await this.playerModel.findOne({ email });
 
     if (playerExists) {
-      const message = `Player with email ${email} already exists`;
-      this.logger.error(message);
-
-      throw new BadRequestException(message);
+      throw new BadRequestException(
+        `Player with email ${email} already exists`,
+      );
     }
 
     const player = new this.playerModel(createPlayerDto);
@@ -48,8 +47,6 @@ export class PlayersService {
     try {
       player.save();
     } catch (error) {
-      this.logger.error(error.message);
-
       throw new InternalServerErrorException(error.message);
     }
 
@@ -64,19 +61,15 @@ export class PlayersService {
     let player: Player = await this.findById(id);
 
     if (!player) {
-      const message = `Player with id ${id} not found`;
-      this.logger.error(message);
-
-      throw new NotFoundException(message);
+      throw new NotFoundException(`Player with id ${id} not found`);
     }
 
     const sameEmailPlayer = await this.playerModel.findOne({ email });
 
     if (sameEmailPlayer && player != sameEmailPlayer) {
-      const message = `Cannot save player with email ${email}. Already exists`;
-      this.logger.error(message);
-
-      throw new BadRequestException(message);
+      throw new BadRequestException(
+        `Cannot save player with email ${email}. Already exists`,
+      );
     }
 
     try {
@@ -90,8 +83,6 @@ export class PlayersService {
 
       return player;
     } catch (error) {
-      this.logger.error(error.message);
-
       throw new InternalServerErrorException(error.message);
     }
   }
@@ -102,17 +93,12 @@ export class PlayersService {
     const player: Player = await this.findById(id);
 
     if (!player) {
-      const message = `Player with id ${id} not found`;
-      this.logger.error(message);
-
-      throw new NotFoundException(message);
+      throw new NotFoundException(`Player with id ${id} not found`);
     }
 
     try {
       this.playerModel.deleteOne({ _id: id }).exec();
     } catch (error) {
-      this.logger.error(error.message);
-
       throw new InternalServerErrorException(error.message);
     }
 
