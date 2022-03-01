@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PlayersModule } from './players/modules/players.module';
+import { CategoriesModule } from './categories/modules/categories.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { PlayersModule } from './players/modules/players.module';
       },
     ),
     PlayersModule,
+    CategoriesModule,
   ],
   controllers: [],
   providers: [],
