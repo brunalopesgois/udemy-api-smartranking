@@ -58,7 +58,7 @@ export class PlayersService {
 
     try {
       const player = await this.playerModel.findByIdAndUpdate(
-        { id },
+        { _id: id },
         { $set: updatePlayerDto },
         { new: true },
       );
