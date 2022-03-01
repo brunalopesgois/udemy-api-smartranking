@@ -59,6 +59,8 @@ export class PlayersService {
   async update(id: string, updatePlayerDto: UpdatePlayerDto): Promise<Player> {
     this.logger.log(`Update player: ${JSON.stringify(updatePlayerDto)}`);
 
+    const { email } = updatePlayerDto;
+
     let player: Player = await this.findById(id);
 
     if (!player) {
@@ -66,6 +68,15 @@ export class PlayersService {
       this.logger.error(message);
 
       throw new NotFoundException(message);
+    }
+
+    const sameEmailPlayer = await this.playerModel.findOne({ email });
+
+    if (sameEmailPlayer && player != sameEmailPlayer) {
+      const message = `Cannot save player with email ${email}. Already exists`;
+      this.logger.error(message);
+
+      throw new BadRequestException(message);
     }
 
     try {
