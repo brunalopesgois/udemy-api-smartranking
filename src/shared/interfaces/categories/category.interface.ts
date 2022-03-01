@@ -1,4 +1,3 @@
-import { PlayerInterface } from './../players/player.interface';
 import { RankingEventInterface } from './ranking-event.interface';
 
 export interface CategoryInterface {
@@ -8,5 +7,5 @@ export interface CategoryInterface {
 
   rankingEvents: RankingEventInterface[];
 
-  players: PlayerInterface[];
+  players: string[];
 }

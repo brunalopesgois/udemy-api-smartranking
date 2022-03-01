@@ -1,3 +1,4 @@
+import { AddCategoryPlayerDto } from './../dtos/add-category-player.dto';
 import { UpdateCategoryDto } from './../dtos/update-category.dto';
 import { CreateCategoryDto } from './../dtos/create-category.dto';
 import {
@@ -10,6 +11,8 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from '../entities/categories/category.entity';
 import { Model } from 'mongoose';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class CategoriesService {
@@ -17,12 +20,13 @@ export class CategoriesService {
 
   constructor(
     @InjectModel('Category') private readonly categoryModel: Model<Category>,
+    private readonly httpService: HttpService,
   ) {
     this.logger = new Logger(CategoriesService.name);
   }
 
   async findAll(): Promise<Category[]> {
-    return this.categoryModel.find();
+    return this.categoryModel.find().populate('players');
   }
 
   async findById(id: string): Promise<Category> {
@@ -120,5 +124,45 @@ export class CategoriesService {
     }
 
     this.logger.log(`Category removed`);
+  }
+
+  async includePlayerInCategory(
+    id: string,
+    addCategoryPlayerDto: AddCategoryPlayerDto,
+  ): Promise<void> {
+    const category = await this.findById(id);
+
+    if (!category) {
+      const message = `Category with id ${id} not found`;
+      this.logger.error(message);
+
+      throw new NotFoundException(message);
+    }
+
+    const { playerId } = addCategoryPlayerDto;
+
+    const player = await firstValueFrom(
+      this.httpService.get(`http://localhost:8080/api/v1/players/${playerId}`),
+    );
+
+    if (!player.data) {
+      const message = `Player with id ${id} not found`;
+      this.logger.error(message);
+
+      throw new NotFoundException(message);
+    }
+
+    category.players.push(playerId);
+
+    try {
+      await this.categoryModel.findByIdAndUpdate(
+        { _id: id },
+        { $set: category },
+      );
+    } catch (error) {
+      this.logger.error(error.message);
+
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

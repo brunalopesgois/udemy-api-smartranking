@@ -1,3 +1,4 @@
+import { AddCategoryPlayerDto } from './../dtos/add-category-player.dto';
 import { UpdateCategoryDto } from './../dtos/update-category.dto';
 import { CreateCategoryDto } from './../dtos/create-category.dto';
 import { CategoriesService } from './../services/categories.service';
@@ -45,5 +46,16 @@ export class CategoriesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async destroy(@Param('id') id: string): Promise<void> {
     return this.categoriesService.delete(id);
+  }
+
+  @Post(':id/players')
+  async storePlayer(
+    @Param('id') id: string,
+    @Body() addCategoryPlayerDto: AddCategoryPlayerDto,
+  ) {
+    return this.categoriesService.includePlayerInCategory(
+      id,
+      addCategoryPlayerDto,
+    );
   }
 }
