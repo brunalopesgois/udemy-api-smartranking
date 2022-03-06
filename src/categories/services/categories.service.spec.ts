@@ -1,3 +1,4 @@
+import { HttpService } from '@nestjs/axios';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesService } from './categories.service';
@@ -14,6 +15,8 @@ describe('CategoriesService', () => {
     deleteOne: jest.fn(),
   };
 
+  const mockHttpService = { get: jest.fn() };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -21,6 +24,10 @@ describe('CategoriesService', () => {
         {
           provide: getModelToken('Category'),
           useValue: mockModel,
+        },
+        {
+          provide: HttpService,
+          useValue: mockHttpService,
         },
       ],
     }).compile();
