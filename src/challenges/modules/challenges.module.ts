@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ChallengesController } from '../controllers/challenges.controller';
@@ -12,6 +13,7 @@ import { ChallengesService } from '../services/challenges.service';
         schema: ChallengeSchema,
       },
     ]),
+    HttpModule,
   ],
   controllers: [ChallengesController],
   providers: [ChallengesService],

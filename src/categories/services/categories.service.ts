@@ -25,7 +25,13 @@ export class CategoriesService {
     this.logger = new Logger(CategoriesService.name);
   }
 
-  async findAll(): Promise<Category[]> {
+  async findAll(playerId?: string): Promise<Category[]> {
+    if (playerId) {
+      return this.categoryModel
+        .find({ players: { _id: playerId } })
+        .populate('players');
+    }
+
     return this.categoryModel.find().populate('players');
   }
 

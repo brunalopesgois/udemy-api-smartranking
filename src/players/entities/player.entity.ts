@@ -2,7 +2,7 @@ import { PlayerInterface } from '../../shared/interfaces/players/player.interfac
 import { Document } from 'mongoose';
 
 export class Player extends Document implements PlayerInterface {
-  id: string;
+  _id: string;
 
   phone: string;
 

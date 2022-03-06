@@ -12,6 +12,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { Category } from '../entities/categories/category.entity';
 
@@ -20,8 +21,8 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get()
-  async index(): Promise<Category[]> {
-    return this.categoriesService.findAll();
+  async index(@Query('player') playerId: string): Promise<Category[]> {
+    return this.categoriesService.findAll(playerId);
   }
 
   @Get(':id')
