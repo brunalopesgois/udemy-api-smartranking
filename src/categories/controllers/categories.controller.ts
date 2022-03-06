@@ -12,7 +12,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { Category } from '../entities/categories/category.entity';
 
@@ -21,8 +20,8 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get()
-  async index(@Query('player') playerId: string): Promise<Category[]> {
-    return this.categoriesService.findAll(playerId);
+  async index(): Promise<Category[]> {
+    return this.categoriesService.findAll();
   }
 
   @Get(':id')
@@ -58,5 +57,12 @@ export class CategoriesController {
       id,
       addCategoryPlayerDto,
     );
+  }
+
+  @Get('players/:playerId')
+  async categoriesByPlayer(
+    @Param('playerId') playerId: string,
+  ): Promise<Category[]> {
+    return this.categoriesService.findByPlayers(playerId);
   }
 }

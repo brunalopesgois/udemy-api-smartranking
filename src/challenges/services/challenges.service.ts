@@ -24,13 +24,7 @@ export class ChallengesService {
     this.logger = new Logger(ChallengesService.name);
   }
 
-  async findAll(playerId?: string): Promise<Challenge[]> {
-    if (playerId) {
-      return this.challengeModel
-        .find({ players: { _id: playerId } })
-        .populate('players');
-    }
-
+  async findAll(): Promise<Challenge[]> {
     return this.challengeModel.find().populate('players');
   }
 
@@ -69,6 +63,12 @@ export class ChallengesService {
     }
 
     this.logger.log(`Created category: ${JSON.stringify(challengeEntity)}`);
+  }
+
+  async findByPlayers(playerId: string): Promise<Challenge[]> {
+    return this.challengeModel
+      .find({ players: { _id: playerId } })
+      .populate('players');
   }
 
   private async validatePlayers(players): Promise<void> {

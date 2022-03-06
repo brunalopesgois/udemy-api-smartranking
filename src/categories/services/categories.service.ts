@@ -25,13 +25,7 @@ export class CategoriesService {
     this.logger = new Logger(CategoriesService.name);
   }
 
-  async findAll(playerId?: string): Promise<Category[]> {
-    if (playerId) {
-      return this.categoryModel
-        .find({ players: { _id: playerId } })
-        .populate('players');
-    }
-
+  async findAll(): Promise<Category[]> {
     return this.categoryModel.find().populate('players');
   }
 
@@ -159,5 +153,11 @@ export class CategoriesService {
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
+  }
+
+  async findByPlayers(playerId: string): Promise<Category[]> {
+    return this.categoryModel
+      .find({ players: { _id: playerId } })
+      .populate('players');
   }
 }
