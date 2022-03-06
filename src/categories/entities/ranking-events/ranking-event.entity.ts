@@ -1,4 +1,4 @@
-import { RankingEventInterface } from './../../../shared/interfaces/categories/ranking-event.interface';
+import { RankingEventInterface } from '../../../shared/interfaces/categories/ranking-event.interface';
 import { Document } from 'mongoose';
 
 export class RankingEvent extends Document implements RankingEventInterface {

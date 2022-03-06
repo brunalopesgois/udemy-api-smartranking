@@ -2,6 +2,8 @@ import { PlayerInterface } from './../../../../dist/players/interfaces/player.in
 import { RankingEventInterface } from './ranking-event.interface';
 
 export interface CategoryInterface {
+  readonly _id: string;
+
   readonly category: string;
 
   description: string;

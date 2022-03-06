@@ -1,5 +1,5 @@
 export interface PlayerInterface {
-  _id: string;
+  readonly _id: string;
 
   phone: string;
 

@@ -1,8 +1,10 @@
+import { MatchInterface } from '../matches/match.interface';
 import { PlayerInterface } from '../players/player.interface';
 import { ChallengeStatus } from './../../enums/challenges/challenge-status.enum';
-import { MatchInterface } from './match.interface';
 
 export interface ChallengeInterface {
+  readonly _id: string;
+
   challengeDateTime: Date;
 
   status: ChallengeStatus;
