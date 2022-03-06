@@ -31,7 +31,7 @@ export class ChallengesService {
         .populate('players');
     }
 
-    return this.challengeModel.find();
+    return this.challengeModel.find().populate('players');
   }
 
   async create(createChallengeDto: CreateChallengeDto): Promise<void> {
