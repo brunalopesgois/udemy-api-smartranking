@@ -10,7 +10,7 @@ async function bootstrap() {
   });
   const app = await NestFactory.create(RootModule);
   const configService = app.get(ConfigService);
-  const port = configService.get('PORT');
+  const port = configService.get<number>('PORT');
   app.setGlobalPrefix('/v1/api');
   await app.listen(port);
 }
