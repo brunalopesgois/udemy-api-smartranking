@@ -16,6 +16,20 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@sr-backoffice/backoffice-domain": [
+        "libs/backoffice-domain/src"
+      ],
+      "@sr-backoffice/backoffice-domain/*": [
+        "libs/backoffice-domain/src/*"
+      ],
+      "@sr-challenges/challenges-domain": [
+        "libs/challenges-domain/src"
+      ],
+      "@sr-challenges/challenges-domain/*": [
+        "libs/challenges-domain/src/*"
+      ]
+    }
   }
 }

@@ -1,4 +1,48 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "apps/backoffice/src",
+  "monorepo": true,
+  "root": "apps/backoffice",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/backoffice/tsconfig.app.json"
+  },
+  "projects": {
+    "backoffice": {
+      "type": "application",
+      "root": "apps/backoffice",
+      "entryFile": "main",
+      "sourceRoot": "apps/backoffice/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/backoffice/tsconfig.app.json"
+      }
+    },
+    "backoffice-domain": {
+      "type": "library",
+      "root": "libs/backoffice-domain",
+      "entryFile": "index",
+      "sourceRoot": "libs/backoffice-domain/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/backoffice-domain/tsconfig.lib.json"
+      }
+    },
+    "challenges-domain": {
+      "type": "library",
+      "root": "libs/challenges-domain",
+      "entryFile": "index",
+      "sourceRoot": "libs/challenges-domain/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/challenges-domain/tsconfig.lib.json"
+      }
+    },
+    "challenges": {
+      "type": "application",
+      "root": "apps/challenges",
+      "entryFile": "main",
+      "sourceRoot": "apps/challenges/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/challenges/tsconfig.app.json"
+      }
+    }
+  }
 }
